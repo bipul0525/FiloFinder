@@ -75,7 +75,7 @@ private final class TabChip: NSView {
 
         // Active: filled folder in the place's colour; inactive: grey outline.
         let icon = NSImageView(image: (active
-            ? PlaceColor.icon("folder.fill", color: PlaceColor.muted(PlaceColor.color(for: tab.path), strength: 0.5),
+            ? PlaceColor.icon("folder.fill", color: PlaceColor.muted(PlaceColor.color(for: tab.path), strength: 0.65),
                               size: 11.5, weight: .medium)
             : NSImage(systemSymbolName: "folder", accessibilityDescription: nil)) ?? NSImage())
         icon.symbolConfiguration = active ? nil : .init(pointSize: 11.5, weight: .medium)

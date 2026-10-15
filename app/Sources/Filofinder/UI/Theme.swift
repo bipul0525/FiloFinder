@@ -244,16 +244,17 @@ enum PlaceColor {
     /// The place colour softened toward grey — a hint of colour, not a shout.
     /// `strength` 0 = grey, 1 = full colour.
     static func muted(_ color: NSColor, strength: CGFloat = 0.45) -> NSColor {
-        let grey = NSColor.secondaryLabelColor.usingColorSpace(.deviceRGB) ?? .gray
+        // Solid grey (secondaryLabelColor is semi-transparent and washed icons out).
+        let grey = NSColor.systemGray.usingColorSpace(.deviceRGB) ?? .gray
         let c = color.usingColorSpace(.deviceRGB) ?? color
         return grey.blended(withFraction: strength, of: c) ?? c
     }
 
-    /// A two-tone (hierarchical) SF Symbol in that colour, not recoloured by
+    /// A solid single-colour SF Symbol in that colour, not recoloured by
     /// sidebar or selection styles.
     static func icon(_ symbol: String, color: NSColor, size: CGFloat = 12.5, weight: NSFont.Weight = .regular) -> NSImage? {
         let img = NSImage(systemSymbolName: symbol, accessibilityDescription: nil)?
-            .withSymbolConfiguration(.init(pointSize: size, weight: weight).applying(.init(hierarchicalColor: color)))
+            .withSymbolConfiguration(.init(pointSize: size, weight: weight).applying(.init(paletteColors: [color])))
         img?.isTemplate = false
         return img
     }
