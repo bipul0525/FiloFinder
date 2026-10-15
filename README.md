@@ -4,6 +4,8 @@
 
 <p align="center"><b>A fast, free, open-source Finder alternative for macOS</b> — with real Cut &amp; Paste, split view, tabs and a folder tree.</p>
 
+<p align="center"><img src="docs/screenshot.png" alt="FiloFinder — a Finder alternative for macOS with a folder tree sidebar, tabs and grid view" width="900"></p>
+
 ---
 
 **FiloFinder** is a free **Finder replacement for Mac**. It's a native file manager/file explorer for people who miss Windows Explorer features on macOS, or who just want a faster, more powerful Finder.
@@ -27,6 +29,9 @@
 It's a good fit if you're looking for a **Windows Explorer–style file manager for macOS**, a **dual-pane file manager**, or a free alternative to paid Finder replacements like Path Finder, ForkLift or Commander One.
 
 ## Features
+
+<p align="center"><img src="docs/screenshot-split.png" alt="FiloFinder split view — dual-pane file manager for Mac" width="900"></p>
+
 
 - **Real Cut & Paste** (⌘X → ⌘V moves files), plus copy, duplicate, rename and new folder, with **undo** (⌘Z).
 - **Never overwrites silently:**
@@ -58,7 +63,13 @@ curl -fsSL https://raw.githubusercontent.com/bipul0525/FiloFinder/main/install.s
 
 This downloads the latest release, **verifies its checksum and signature**, installs it in `/Applications`, removes the download quarantine and opens it. Nothing else needed. You're welcome to [read the script first](install.sh).
 
-### Option 2 — Install from the DMG
+### Option 2 — Homebrew
+
+```sh
+brew install --cask bipul0525/tap/filofinder
+```
+
+### Option 3 — Install from the DMG
 
 1. Download **`Filofinder-x.y.z.dmg`** from [Releases](https://github.com/bipul0525/FiloFinder/releases/latest).
 2. Double-click the DMG and drag **Filofinder** onto **Applications**.
