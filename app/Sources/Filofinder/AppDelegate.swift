@@ -22,7 +22,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     /// Filofinder browses the whole disk, so ask for Full Disk Access up front.
     private func askForDiskAccessIfNeeded() {
         let env = ProcessInfo.processInfo.environment
-        guard !DiskAccess.isGranted, !DiskAccess.dontAskAgain, env["FILOFINDER_SNAPSHOT"] == nil || env["FILOFINDER_SHOW_ACCESS"] == "1",
+        guard !DiskAccess.isGranted, !DiskAccess.dontAskAgain, env["FILOFINDER_SNAPSHOT"] == nil,
               let main = windows.first, let window = main.window else { return }
         let sheet = DiskAccessSheet()
         sheet.onGranted = { [weak main] in
@@ -52,7 +52,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         windows.append(controller)
         controller.showWindow(nil)
         controller.window?.makeKeyAndOrderFront(nil)
-        // Test hook: FILOFINDER_SPLIT=1 opens straight into split view.
+        #if DEBUG
+        installTestHooks(controller)
+        #endif
+    }
+
+    #if DEBUG
+    /// Development-only hooks used for automated checks (not in release builds).
+    private func installTestHooks(_ controller: FileManagerWindowController) {
+        // FILOFINDER_SPLIT=1 opens straight into split view.
         let env = ProcessInfo.processInfo.environment
         if env["FILOFINDER_SPLIT"] == "1" { controller.toggleSplit(nil) }
         if env["FILOFINDER_FOCUS"] == "right" {
@@ -81,4 +89,5 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             }
         }
     }
+    #endif
 }

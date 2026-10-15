@@ -63,6 +63,9 @@ final class FileManagerWindowController: NSWindowController, NSWindowDelegate, N
     private var panel: FilePanel { (splitMode && focused == .right ? rightPane : leftPane).panel }
     private var preview: PreviewPaneView!
     private(set) lazy var ops = FileOps(fm: self)
+    /// Live refresh for the folder shown in each pane.
+    private lazy var leftWatcher = FolderWatcher { [weak self] in self?.externalChange(.left) }
+    private lazy var rightWatcher = FolderWatcher { [weak self] in self?.externalChange(.right) }
     private(set) lazy var quickLook = QuickLookController(fm: self)
     private var activity: String?
     private let split = NSSplitView()
@@ -211,7 +214,21 @@ final class FileManagerWindowController: NSWindowController, NSWindowDelegate, N
 
     // MARK: Refresh
 
+    /// Something outside Filofinder changed a visible folder: re-list it,
+    /// keeping the selection (skipped while our own job is running — it
+    /// refreshes when done).
+    private func externalChange(_ side: Side) {
+        guard !ops.busy, side == .left || splitMode else { return }
+        load(tab(for: side), keepSelection: true)
+    }
+
+    private func updateWatchers() {
+        leftWatcher.watch(leftTab.isVirtual || leftTab.accessDenied ? nil : leftTab.path)
+        rightWatcher.watch(splitMode && !(rightTab?.isVirtual ?? true) ? rightTab?.path : nil)
+    }
+
     func refreshAll() {
+        updateWatchers()
         // captools: split view hides the tab bar, breadcrumbs, tree and
         // preview pane; each pane gets its own header and status bar.
         tabBar.isHidden = splitMode

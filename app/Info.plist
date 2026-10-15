@@ -13,9 +13,21 @@
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
-    <string>0.0.1</string>
+    <string>0.1.0</string>
     <key>CFBundleVersion</key>
     <string>1</string>
+    <key>CFBundleIconFile</key>
+    <string>AppIcon</string>
+    <key>NSHumanReadableCopyright</key>
+    <string>© 2026 Filofinder contributors · MIT License</string>
+    <key>SUFeedURL</key>
+    <string>https://github.com/bipul0525/filofinder/releases/latest/download/appcast.xml</string>
+    <key>SUPublicEDKey</key>
+    <string>k3fsj1vXEX/lSr8G2Fu+kiaWo1+/4Xlc9TcZf8XL/nY=</string>
+    <key>SUEnableAutomaticChecks</key>
+    <true/>
+    <key>SUScheduledCheckInterval</key>
+    <integer>21600</integer>
     <key>LSMinimumSystemVersion</key>
     <string>13.0</string>
     <key>LSApplicationCategoryType</key>

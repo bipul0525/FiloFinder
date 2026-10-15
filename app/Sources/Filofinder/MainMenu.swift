@@ -1,4 +1,5 @@
 import AppKit
+import Sparkle
 
 /// The menu bar, built in code. Items target the first responder, so the
 /// key window's controller handles them. Shortcuts follow captools (UI-SPEC §14).
@@ -10,6 +11,10 @@ enum MainMenu {
 
         let appMenu = NSMenu()
         appMenu.addItem(withTitle: "About Filofinder", action: #selector(NSApplication.orderFrontStandardAboutPanel(_:)), keyEquivalent: "")
+        let updates = NSMenuItem(title: "Check for Updates…", action: #selector(SPUStandardUpdaterController.checkForUpdates(_:)),
+                                 keyEquivalent: "")
+        updates.target = Updater.controller
+        appMenu.addItem(updates)
         appMenu.addItem(.separator())
         appMenu.addItem(withTitle: "Hide Filofinder", action: #selector(NSApplication.hide(_:)), keyEquivalent: "h")
         appMenu.addItem(withTitle: "Quit Filofinder", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
@@ -22,16 +27,12 @@ enum MainMenu {
         file.addItem(.separator())
         file.addItem(withTitle: "New Folder", action: #selector(FM.newFolder(_:)), keyEquivalent: "")
         file.addItem(withTitle: "Duplicate", action: #selector(FM.duplicateItems(_:)), keyEquivalent: "d")
-        file.addItem(withTitle: "Create ZIP", action: #selector(FM.createZip(_:)), keyEquivalent: "")
         file.addItem(.separator())
         file.addItem(withTitle: "Close Window", action: #selector(NSWindow.performClose(_:)), keyEquivalent: "w")
         add(file, titled: "File", to: main)
 
         let edit = NSMenu(title: "Edit")
         edit.addItem(withTitle: "Undo", action: #selector(FM.undoAction(_:)), keyEquivalent: "z")
-        let redo = NSMenuItem(title: "Redo", action: #selector(FM.redoAction(_:)), keyEquivalent: "z")
-        redo.keyEquivalentModifierMask = [.command, .shift]
-        edit.addItem(redo)
         edit.addItem(.separator())
         edit.addItem(withTitle: "Cut", action: #selector(FM.cutItems(_:)), keyEquivalent: "x")
         edit.addItem(withTitle: "Copy", action: #selector(FM.copyItems(_:)), keyEquivalent: "c")

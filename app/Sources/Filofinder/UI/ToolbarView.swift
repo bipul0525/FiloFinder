@@ -147,9 +147,11 @@ final class ToolbarView: DraggableBackgroundView {
             x = max(x, paneX)
         }
         _ = window
+        #if DEBUG
         if ProcessInfo.processInfo.environment["FILOFINDER_DEBUG"] != nil {
             FileHandle.standardError.write(Data("[cluster] split=\(fm.splitMode) focus=\(fm.focused) leftMax=\(leftZone.frame.maxX) pane=\(String(describing: fm.paneFrameInWindow(fm.focused))) x=\(x) const=\(clusterLeading.constant) clusterFrame=\(cluster.frame)\n".utf8))
         }
+        #endif
         guard abs(clusterLeading.constant - x) > 0.5 else { return }
         // Set the final value first, then animate the frame change. Animating
         // the constraint itself let relayouts stop the slide half-way.
@@ -196,7 +198,7 @@ final class ToolbarView: DraggableBackgroundView {
         pasteButton.isEnabled = fm.ops.canPaste && idle
         undoButton.isEnabled = fm.ops.canUndo
         undoButton.toolTip = fm.ops.undoTitle.map { "Undo \($0) (⌘Z)" } ?? "Undo (⌘Z)"
-        redoButton.isEnabled = false
+        redoButton.isHidden = true // redo arrives later; no dead buttons in releases
         binActionButton.toolTip = "Move to Trash (Del)"
 
         listButton.state = fm.viewMode == .list ? .on : .off
@@ -212,8 +214,7 @@ final class ToolbarView: DraggableBackgroundView {
         previewButton.image = NSImage(systemSymbolName: "sidebar.right",
                                       accessibilityDescription: "Preview")
         previewButton.toolTip = fm.showPreview ? "Hide Preview Pane" : "Show Preview Pane"
-        createZipButton.isEnabled = false
-        createZipButton.toolTip = "Create ZIP from selected files — coming in v0.2"
+        zipGroup.isHidden = true // Create ZIP arrives in v0.2
     }
 
     /// Finder-style View Options menu: every display setting in one place.
