@@ -232,7 +232,7 @@ enum PlaceColor {
         return [
             (h("Downloads"), .systemGreen), (h("Documents"), .systemBlue), (h("Desktop"), .systemTeal),
             (h("Pictures"), .systemOrange), (h("Movies"), .systemPink), (h("Music"), .systemRed),
-            ("/Applications", .systemPurple), (Tab.trashPath, .systemGray), (home, .systemIndigo),
+            ("/Applications", .systemMint), (Tab.trashPath, .systemGray), (home, .systemYellow),
         ]
     }
 
