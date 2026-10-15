@@ -347,7 +347,8 @@ final class TreeSidebar: NSVisualEffectView, NSOutlineViewDataSource, NSOutlineV
             cell.imageView?.contentTintColor = nil
         } else {
             cell.imageView?.image = NSImage(systemSymbolName: node.symbol, accessibilityDescription: nil)
-            cell.imageView?.contentTintColor = .controlAccentColor
+            // Calm monochrome glyphs; the selected row brightens (TreeCell).
+            cell.imageView?.contentTintColor = .secondaryLabelColor
         }
         (cell as? TreeCell)?.addButton.isEnabled = Tags.tag(fromPath: node.path) == nil
         cell.toolTip = node.path
@@ -376,8 +377,8 @@ final class TreeSidebar: NSVisualEffectView, NSOutlineViewDataSource, NSOutlineV
         } else {
             text.font = .systemFont(ofSize: 12.5)
             let image = NSImageView()
-            image.symbolConfiguration = .init(pointSize: 12, weight: .regular)
-            image.contentTintColor = .controlAccentColor
+            image.symbolConfiguration = .init(pointSize: 12.5, weight: .regular)
+            image.contentTintColor = .secondaryLabelColor
             image.translatesAutoresizingMaskIntoConstraints = false
             cell.addSubview(image)
             cell.imageView = image
@@ -469,6 +470,14 @@ final class TreeCell: NSTableCellView {
     required init?(coder: NSCoder) { fatalError() }
 
     @objc private func add() { onNewFolder?() }
+
+    /// Selected row: icon and text at full strength; otherwise a soft grey icon.
+    override var backgroundStyle: NSView.BackgroundStyle {
+        didSet {
+            guard imageView?.image?.isTemplate != false else { return } // keep tag dots coloured
+            imageView?.contentTintColor = backgroundStyle == .emphasized ? .labelColor : .secondaryLabelColor
+        }
+    }
 
     override func updateTrackingAreas() {
         if let tracking { removeTrackingArea(tracking) }
