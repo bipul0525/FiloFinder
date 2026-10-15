@@ -2,14 +2,29 @@
 
 <h1 align="center">FiloFinder</h1>
 
-<p align="center">A fast, free, open-source file manager for macOS — with real Cut &amp; Paste.</p>
+<p align="center"><b>A fast, free, open-source Finder alternative for macOS</b> — with real Cut &amp; Paste, split view, tabs and a folder tree.</p>
 
 ---
 
-Filofinder is a Finder alternative built for speed:
+**FiloFinder** is a free **Finder replacement for Mac**. It's a native file manager/file explorer for people who miss Windows Explorer features on macOS, or who just want a faster, more powerful Finder.
+
 - **Native Mac app:** an AppKit interface over a Rust core, smooth at 120 Hz.
 - **Large folders:** lists 100,000-item folders in about a tenth of a second.
-- **Small:** around 7 MB.
+- **Small:** around 7 MB, free and MIT-licensed, with no account and no telemetry.
+
+## Why use FiloFinder instead of Finder?
+
+| | Finder | FiloFinder |
+|---|---|---|
+| Cut & Paste files (⌘X / ⌘V) | ✗ (hidden ⌥⌘V only) | ✓ |
+| Dual-pane / split view | ✗ | ✓ |
+| Expandable folder tree sidebar | ✗ | ✓ |
+| Image previews in the folder tree | ✗ | ✓ |
+| Clean ZIP extraction (no `__MACOSX` junk) | ✗ | ✓ |
+| Tabs, Quick Look, tags, Trash | ✓ | ✓ |
+| Open source | ✗ | ✓ |
+
+It's a good fit if you're looking for a **Windows Explorer–style file manager for macOS**, a **dual-pane file manager**, or a free alternative to paid Finder replacements like Path Finder, ForkLift or Commander One.
 
 ## Features
 
@@ -107,6 +122,18 @@ The project has two halves:
 - `app/` holds the Swift/AppKit interface, connected to the core through [UniFFI](https://github.com/mozilla/uniffi-rs).
 
 See [docs/PLAN.md](docs/PLAN.md) for the design.
+
+## FAQ
+
+**Is FiloFinder a free Finder alternative?** Yes, it's completely free and open source (MIT).
+
+**Can I cut and paste files on Mac with it?** Yes. ⌘X then ⌘V moves files, just like Windows.
+
+**Does it replace Finder?** It runs alongside Finder; you can use it as your everyday file browser. Finder stays installed (macOS requires it).
+
+**Does it work on Apple Silicon and Intel?** Yes, it's a universal app for macOS 13 Ventura and newer.
+
+**Why does macOS say the app "is damaged"?** It isn't notarised by Apple, because that requires a paid developer account. See [Install](#install) for the one-time fix.
 
 ## Privacy
 
