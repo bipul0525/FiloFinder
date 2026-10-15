@@ -1,13 +1,17 @@
 import AppKit
 
 /// captools TabBar (UI-SPEC §4): folder icon · name · close-on-hover · "+".
-final class TabBarView: NSView {
+final class TabBarView: NSVisualEffectView {
     private unowned let fm: FileManagerWindowController
-    private let stack = UI.hstack([], spacing: 2)
+    private let stack = UI.hstack([], spacing: 4)
 
     init(fm: FileManagerWindowController) {
         self.fm = fm
         super.init(frame: .zero)
+        // Same material as the toolbar, so the header reads as one surface.
+        material = .titlebar
+        blendingMode = .withinWindow
+        state = .followsWindowActiveState
         let scroll = NSScrollView()
         scroll.drawsBackground = false
         scroll.hasHorizontalScroller = false
@@ -18,15 +22,14 @@ final class TabBarView: NSView {
         scroll.documentView = doc
         addSubview(scroll)
         NSLayoutConstraint.activate([
-            scroll.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 6),
+            scroll.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
             scroll.trailingAnchor.constraint(equalTo: trailingAnchor),
             scroll.topAnchor.constraint(equalTo: topAnchor),
             scroll.bottomAnchor.constraint(equalTo: bottomAnchor),
             doc.heightAnchor.constraint(equalTo: scroll.heightAnchor),
             stack.leadingAnchor.constraint(equalTo: doc.leadingAnchor),
             stack.trailingAnchor.constraint(equalTo: doc.trailingAnchor),
-            stack.bottomAnchor.constraint(equalTo: doc.bottomAnchor),
-            stack.topAnchor.constraint(equalTo: doc.topAnchor, constant: 3),
+            stack.centerYAnchor.constraint(equalTo: doc.centerYAnchor),
         ])
     }
 
@@ -38,7 +41,8 @@ final class TabBarView: NSView {
         for tab in fm.tabs {
             stack.addArrangedSubview(TabChip(tab: tab, fm: fm, active: tab === fm.activeTab, canClose: fm.tabs.count > 1))
         }
-        let plus = UI.iconButton("plus", "New Tab (⌘T)", target: fm, action: #selector(FileManagerWindowController.newTab(_:)), size: 24)
+        let plus = HoverButton(symbol: "plus", tooltip: "New Tab (⌘T)", target: fm,
+                               action: #selector(FileManagerWindowController.newTab(_:)), size: 26, pointSize: 12)
         stack.addArrangedSubview(plus)
     }
 }
@@ -58,20 +62,23 @@ private final class TabChip: NSView {
         self.tab = tab
         self.fm = fm
         self.active = active
-        close = UI.iconButton("xmark", "Close tab", target: nil, action: nil, size: 18)
+        close = HoverButton(symbol: "xmark", tooltip: "Close tab", target: nil, action: nil, size: 18, pointSize: 9,
+                            weight: .bold)
+        (close as? HoverButton)?.cornerRadius = 4
         super.init(frame: .zero)
         wantsLayer = true
-        layer?.cornerRadius = 6
-        layer?.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+        layer?.cornerRadius = 7
+        layer?.shadowOffset = CGSize(width: 0, height: -0.5)
+        layer?.shadowRadius = 1.5
         translatesAutoresizingMaskIntoConstraints = false
         toolTip = tab.path ?? tab.name
 
         let icon = NSImageView(image: NSImage(systemSymbolName: "folder", accessibilityDescription: nil) ?? NSImage())
-        icon.symbolConfiguration = .init(pointSize: 11, weight: .regular)
+        icon.symbolConfiguration = .init(pointSize: 11.5, weight: active ? .semibold : .regular)
         icon.contentTintColor = active ? .controlAccentColor : .secondaryLabelColor
-        let name = UI.label(tab.name, size: 12, weight: active ? .medium : .regular,
+        let name = UI.label(tab.name, size: 12.5, weight: active ? .semibold : .regular,
                             color: active ? .labelColor : .secondaryLabelColor)
-        name.widthAnchor.constraint(lessThanOrEqualToConstant: 120).isActive = true
+        name.widthAnchor.constraint(lessThanOrEqualToConstant: 160).isActive = true
         close.target = self
         close.action = #selector(closeTab)
         close.isHidden = true
@@ -79,10 +86,11 @@ private final class TabChip: NSView {
         let row = UI.hstack([icon, name, close], spacing: 6)
         addSubview(row)
         NSLayoutConstraint.activate([
-            row.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
-            row.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -6),
+            row.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 11),
+            row.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -5),
             row.centerYAnchor.constraint(equalTo: centerYAnchor),
-            heightAnchor.constraint(equalToConstant: 26),
+            heightAnchor.constraint(equalToConstant: 28),
+            widthAnchor.constraint(greaterThanOrEqualToConstant: 96),
             close.widthAnchor.constraint(equalToConstant: 18),
         ])
         if !canClose { close.removeFromSuperview() }
@@ -93,10 +101,22 @@ private final class TabChip: NSView {
 
     override var wantsUpdateLayer: Bool { true }
 
+    private var hovering = false { didSet { updateLayer() } }
+
+    /// Active: a raised card (content colour, hairline, soft shadow).
+    /// Inactive: flat, with a faint wash on hover.
     override func updateLayer() {
-        layer?.backgroundColor = active ? NSColor.controlBackgroundColor.cgColor : NSColor.clear.cgColor
-        layer?.borderWidth = active ? 1 : 0
-        layer?.borderColor = NSColor.separatorColor.cgColor
+        let dark = effectiveAppearance.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
+        if active {
+            layer?.backgroundColor = (dark ? NSColor.white.withAlphaComponent(0.12) : NSColor.controlBackgroundColor).cgColor
+            layer?.borderWidth = 0.5
+            layer?.borderColor = NSColor.separatorColor.cgColor
+            layer?.shadowOpacity = dark ? 0 : 0.12
+        } else {
+            layer?.backgroundColor = (hovering ? NSColor.labelColor.withAlphaComponent(0.06) : .clear).cgColor
+            layer?.borderWidth = 0
+            layer?.shadowOpacity = 0
+        }
     }
 
     override func updateTrackingAreas() {
@@ -106,8 +126,8 @@ private final class TabChip: NSView {
         tracking = t
     }
 
-    override func mouseEntered(with event: NSEvent) { close.isHidden = false }
-    override func mouseExited(with event: NSEvent) { close.isHidden = true }
+    override func mouseEntered(with event: NSEvent) { close.isHidden = false; hovering = true }
+    override func mouseExited(with event: NSEvent) { close.isHidden = true; hovering = false }
 
     override func mouseDown(with event: NSEvent) {
         if event.clickCount == 2 {

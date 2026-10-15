@@ -141,8 +141,8 @@ final class FileManagerWindowController: NSWindowController, NSWindowDelegate, N
 
         let line = NSBox()
         line.boxType = .separator
-        tabBar.heightAnchor.constraint(equalToConstant: 28).isActive = true
-        breadcrumbs.heightAnchor.constraint(equalToConstant: 34).isActive = true
+        tabBar.heightAnchor.constraint(equalToConstant: 34).isActive = true
+        breadcrumbs.heightAnchor.constraint(equalToConstant: 38).isActive = true
 
         let column = NSStackView(views: [top, tabBar, breadcrumbs, line, body])
         column.orientation = .vertical

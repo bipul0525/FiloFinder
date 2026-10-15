@@ -135,3 +135,90 @@ enum UI {
 class DraggableBackgroundView: NSView {
     override var mouseDownCanMoveWindow: Bool { true }
 }
+
+/// Borderless icon button with a soft rounded hover/press highlight — the
+/// quieter, Safari/Finder-style control used in the tab and path rows.
+final class HoverButton: NSButton {
+    private var hovering = false { didSet { updateLayer() } }
+    var cornerRadius: CGFloat = 6
+
+    convenience init(symbol: String, tooltip: String, target: AnyObject?, action: Selector?, size: CGFloat = 26,
+                     pointSize: CGFloat = 13, weight: NSFont.Weight = .medium) {
+        self.init(frame: .zero)
+        image = NSImage(systemSymbolName: symbol, accessibilityDescription: tooltip)
+        symbolConfiguration = .init(pointSize: pointSize, weight: weight)
+        imagePosition = .imageOnly
+        isBordered = false
+        self.target = target
+        self.action = action
+        toolTip = tooltip
+        setAccessibilityLabel(tooltip)
+        wantsLayer = true
+        translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            widthAnchor.constraint(equalToConstant: size),
+            heightAnchor.constraint(equalToConstant: size - 2),
+        ])
+    }
+
+    override var wantsUpdateLayer: Bool { true }
+
+    override func updateLayer() {
+        layer?.cornerRadius = cornerRadius
+        let fill: NSColor = !isEnabled ? .clear
+            : isHighlighted ? NSColor.labelColor.withAlphaComponent(0.14)
+            : hovering ? NSColor.labelColor.withAlphaComponent(0.08) : .clear
+        layer?.backgroundColor = fill.cgColor
+        contentTintColor = isEnabled ? (hovering ? .labelColor : .secondaryLabelColor) : .tertiaryLabelColor
+    }
+
+    override var isEnabled: Bool { didSet { needsDisplay = true; updateLayer() } }
+    override var isHighlighted: Bool { didSet { updateLayer() } }
+
+    override func updateTrackingAreas() {
+        trackingAreas.forEach(removeTrackingArea)
+        addTrackingArea(NSTrackingArea(rect: .zero, options: [.mouseEnteredAndExited, .activeInKeyWindow, .inVisibleRect],
+                                       owner: self))
+    }
+
+    override func mouseEntered(with event: NSEvent) { hovering = true }
+    override func mouseExited(with event: NSEvent) { hovering = false }
+}
+
+/// Back/Forward joined in one rounded capsule with a hairline between (Safari).
+final class NavCapsule: NSView {
+    init(_ left: NSButton, _ right: NSButton) {
+        super.init(frame: .zero)
+        wantsLayer = true
+        translatesAutoresizingMaskIntoConstraints = false
+        let divider = NSView()
+        divider.wantsLayer = true
+        divider.translatesAutoresizingMaskIntoConstraints = false
+        (left as? HoverButton)?.cornerRadius = 7
+        (right as? HoverButton)?.cornerRadius = 7
+        let row = UI.hstack([left, divider, right], spacing: 0)
+        addSubview(row)
+        NSLayoutConstraint.activate([
+            row.leadingAnchor.constraint(equalTo: leadingAnchor), row.trailingAnchor.constraint(equalTo: trailingAnchor),
+            row.topAnchor.constraint(equalTo: topAnchor), row.bottomAnchor.constraint(equalTo: bottomAnchor),
+            divider.widthAnchor.constraint(equalToConstant: 1),
+            divider.heightAnchor.constraint(equalToConstant: 14),
+        ])
+        self.divider = divider
+    }
+
+    private var divider: NSView!
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) { fatalError() }
+
+    override var wantsUpdateLayer: Bool { true }
+
+    override func updateLayer() {
+        layer?.cornerRadius = 7
+        layer?.backgroundColor = NSColor.labelColor.withAlphaComponent(0.05).cgColor
+        layer?.borderWidth = 0.5
+        layer?.borderColor = NSColor.separatorColor.cgColor
+        divider.layer?.backgroundColor = NSColor.separatorColor.cgColor
+    }
+}

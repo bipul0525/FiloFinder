@@ -1,7 +1,7 @@
 import AppKit
 
 /// captools Breadcrumbs (UI-SPEC §5): ← → ⟳ | ⌂ › crumbs … [filter].
-final class BreadcrumbBar: NSView {
+final class BreadcrumbBar: NSVisualEffectView {
     private unowned let fm: FileManagerWindowController
     private let backButton: NSButton
     private let forwardButton: NSButton
@@ -11,17 +11,22 @@ final class BreadcrumbBar: NSView {
 
     init(fm: FileManagerWindowController) {
         self.fm = fm
-        backButton = UI.iconButton("arrow.left", "Back (⌘[ or ⌥←)", target: fm,
-                                   action: #selector(FileManagerWindowController.goBack(_:)), size: 26)
-        forwardButton = UI.iconButton("arrow.right", "Forward (⌘] or ⌥→)", target: fm,
-                                      action: #selector(FileManagerWindowController.goForward(_:)), size: 26)
-        refreshButton = UI.iconButton("arrow.clockwise", "Refresh (F5)", target: fm,
-                                      action: #selector(FileManagerWindowController.refresh(_:)), size: 26)
+        backButton = HoverButton(symbol: "chevron.left", tooltip: "Back (⌘[ or ⌥←)", target: fm,
+                                 action: #selector(FileManagerWindowController.goBack(_:)), size: 30, weight: .semibold)
+        forwardButton = HoverButton(symbol: "chevron.right", tooltip: "Forward (⌘] or ⌥→)", target: fm,
+                                    action: #selector(FileManagerWindowController.goForward(_:)), size: 30, weight: .semibold)
+        refreshButton = HoverButton(symbol: "arrow.clockwise", tooltip: "Refresh (F5)", target: fm,
+                                    action: #selector(FileManagerWindowController.refresh(_:)), size: 28, pointSize: 12.5)
         search = PanelSearch(tone: .left, width: 200)
         super.init(frame: .zero)
+        // Same material as the toolbar: toolbar, tabs and path read as one header.
+        material = .titlebar
+        blendingMode = .withinWindow
+        state = .followsWindowActiveState
         search.onChange = { [weak fm] q in fm?.setQuery(q) }
 
-        let home = UI.iconButton("house", "Home (⇧⌘H)", target: fm, action: #selector(FileManagerWindowController.goHome(_:)), size: 24)
+        let home = HoverButton(symbol: "house", tooltip: "Home (⇧⌘H)", target: fm,
+                               action: #selector(FileManagerWindowController.goHome(_:)), size: 28, pointSize: 12.5)
         crumbs.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         let crumbsClip = NSView()
         crumbsClip.translatesAutoresizingMaskIntoConstraints = false
@@ -36,10 +41,12 @@ final class BreadcrumbBar: NSView {
         crumbsClip.wantsLayer = true
         crumbsClip.layer?.masksToBounds = true
 
-        let row = UI.hstack([backButton, forwardButton, refreshButton, UI.separator(), home, crumbsClip, search], spacing: 4)
+        let nav = NavCapsule(backButton, forwardButton)
+        let row = UI.hstack([nav, refreshButton, home, crumbsClip, search], spacing: 6)
+        row.setCustomSpacing(10, after: nav)
         addSubview(row)
         NSLayoutConstraint.activate([
-            row.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),
+            row.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
             row.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8),
             row.centerYAnchor.constraint(equalTo: centerYAnchor),
         ])
@@ -130,7 +137,8 @@ final class PanelSearch: NSView, NSSearchFieldDelegate {
     init(tone: Tone, width: CGFloat) {
         self.tone = tone
         expandedWidth = width
-        button = UI.iconButton("magnifyingglass", "Search / filter this panel", target: nil, action: nil, size: 26)
+        button = HoverButton(symbol: "magnifyingglass", tooltip: "Search / filter this panel", target: nil, action: nil,
+                             size: 28, pointSize: 12.5)
         super.init(frame: .zero)
         translatesAutoresizingMaskIntoConstraints = false
         button.target = self
