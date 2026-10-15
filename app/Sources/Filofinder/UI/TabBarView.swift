@@ -73,11 +73,12 @@ private final class TabChip: NSView {
         translatesAutoresizingMaskIntoConstraints = false
         toolTip = tab.path ?? tab.name
 
-        // Monochrome: active = filled folder at full strength, inactive = outline in grey.
-        let icon = NSImageView(image: NSImage(systemSymbolName: active ? "folder.fill" : "folder",
-                                              accessibilityDescription: nil) ?? NSImage())
-        icon.symbolConfiguration = .init(pointSize: 11.5, weight: .medium)
-        icon.contentTintColor = active ? .labelColor : .secondaryLabelColor
+        // Active: filled folder in the place's colour; inactive: grey outline.
+        let icon = NSImageView(image: (active
+            ? PlaceColor.icon("folder.fill", color: PlaceColor.color(for: tab.path), size: 11.5, weight: .medium)
+            : NSImage(systemSymbolName: "folder", accessibilityDescription: nil)) ?? NSImage())
+        icon.symbolConfiguration = active ? nil : .init(pointSize: 11.5, weight: .medium)
+        icon.contentTintColor = active ? nil : .secondaryLabelColor
         let name = UI.label(tab.name, size: 12.5, weight: active ? .semibold : .regular,
                             color: active ? .labelColor : .secondaryLabelColor)
         name.widthAnchor.constraint(lessThanOrEqualToConstant: 160).isActive = true

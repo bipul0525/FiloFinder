@@ -346,9 +346,10 @@ final class TreeSidebar: NSVisualEffectView, NSOutlineViewDataSource, NSOutlineV
             cell.imageView?.image = dot
             cell.imageView?.contentTintColor = nil
         } else {
-            cell.imageView?.image = NSImage(systemSymbolName: node.symbol, accessibilityDescription: nil)
-            // Calm monochrome glyphs; the selected row brightens (TreeCell).
-            cell.imageView?.contentTintColor = .secondaryLabelColor
+            // Each place has its own colour; subfolders inherit it (Downloads → green…).
+            cell.imageView?.image = PlaceColor.icon(node.symbol == "folder" ? "folder.fill" : node.symbol,
+                                                    color: PlaceColor.color(for: node.path))
+            cell.imageView?.contentTintColor = nil
         }
         (cell as? TreeCell)?.addButton.isEnabled = Tags.tag(fromPath: node.path) == nil
         cell.toolTip = node.path

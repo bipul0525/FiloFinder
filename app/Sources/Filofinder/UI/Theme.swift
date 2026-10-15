@@ -222,3 +222,31 @@ final class NavCapsule: NSView {
         divider.layer?.backgroundColor = NSColor.separatorColor.cgColor
     }
 }
+
+/// Colour of a place, shared by the sidebar and tabs: each top-level
+/// location has its own hue and everything inside it inherits it.
+enum PlaceColor {
+    private static var table: [(String, NSColor)] {
+        let home = Tab.home
+        func h(_ p: String) -> String { (home as NSString).appendingPathComponent(p) }
+        return [
+            (h("Downloads"), .systemGreen), (h("Documents"), .systemBlue), (h("Desktop"), .systemTeal),
+            (h("Pictures"), .systemOrange), (h("Movies"), .systemPink), (h("Music"), .systemRed),
+            ("/Applications", .systemPurple), (Tab.trashPath, .systemGray), (home, .systemIndigo),
+        ]
+    }
+
+    /// Deepest matching place wins (Downloads beats Home).
+    static func color(for path: String) -> NSColor {
+        table.filter { path == $0.0 || path.hasPrefix($0.0 + "/") }.max { $0.0.count < $1.0.count }?.1 ?? .systemGray
+    }
+
+    /// A two-tone (hierarchical) SF Symbol in that colour, not recoloured by
+    /// sidebar or selection styles.
+    static func icon(_ symbol: String, color: NSColor, size: CGFloat = 12.5, weight: NSFont.Weight = .regular) -> NSImage? {
+        let img = NSImage(systemSymbolName: symbol, accessibilityDescription: nil)?
+            .withSymbolConfiguration(.init(pointSize: size, weight: weight).applying(.init(hierarchicalColor: color)))
+        img?.isTemplate = false
+        return img
+    }
+}
