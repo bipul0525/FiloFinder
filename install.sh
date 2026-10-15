@@ -1,7 +1,7 @@
 #!/bin/bash
-# Filofinder installer — https://github.com/bipul0525/filofinder
+# Filofinder installer — https://github.com/bipul0525/FiloFinder
 #
-#   curl -fsSL https://raw.githubusercontent.com/bipul0525/filofinder/main/install.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/bipul0525/FiloFinder/main/install.sh | bash
 #
 # What it does (read it before running — that's good practice):
 #   1. downloads the latest release from GitHub
@@ -12,7 +12,7 @@
 #   6. opens Filofinder
 set -euo pipefail
 
-REPO="bipul0525/filofinder"
+REPO="bipul0525/FiloFinder"
 # The Filofinder Dev signing certificate (SHA-1). Builds signed by anything
 # else are refused.
 CERT_HASH="08266a7fc7a922901867bebe310216a1eb4e42eb"

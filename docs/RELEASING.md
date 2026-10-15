@@ -31,7 +31,7 @@ security list-keychains -d user -s $(security list-keychains -d user | tr -d '"'
 3. `scripts/release.sh` creates `build/release/vX.Y.Z/` containing the zip, the DMG, `SHA256SUMS` and `appcast.xml`.
 4. Commit, tag `vX.Y.Z`, and push.
 5. Create a GitHub Release for the tag and upload all four files. **`appcast.xml` must be attached to every release**, because installed apps read `releases/latest/download/appcast.xml`.
-6. Test: `curl -fsSL https://raw.githubusercontent.com/bipul0525/filofinder/main/install.sh | bash` on a second Mac or user account.
+6. Test: `curl -fsSL https://raw.githubusercontent.com/bipul0525/FiloFinder/main/install.sh | bash` on a second Mac or user account.
 
 ## Manual checklist (until UI tests exist)
 - [ ] Light and dark mode.

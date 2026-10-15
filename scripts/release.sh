@@ -13,7 +13,7 @@ ROOT="${0:A:h:h}"
 VERSION=$(/usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" "$ROOT/app/Info.plist")
 TAG="v$VERSION"
 OUT="$ROOT/build/release/$TAG"
-REPO="bipul0525/filofinder"
+REPO="bipul0525/FiloFinder"
 GENERATE_APPCAST="$(find "$ROOT/app/.build" -path '*Sparkle/bin/generate_appcast' -type f 2>/dev/null | head -1)"
 
 step() { print -P "%F{cyan}▸ $1%f" }

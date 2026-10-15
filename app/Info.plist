@@ -21,7 +21,7 @@
     <key>NSHumanReadableCopyright</key>
     <string>© 2026 Filofinder contributors · MIT License</string>
     <key>SUFeedURL</key>
-    <string>https://github.com/bipul0525/filofinder/releases/latest/download/appcast.xml</string>
+    <string>https://github.com/bipul0525/FiloFinder/releases/latest/download/appcast.xml</string>
     <key>SUPublicEDKey</key>
     <string>k3fsj1vXEX/lSr8G2Fu+kiaWo1+/4Xlc9TcZf8XL/nY=</string>
     <key>SUEnableAutomaticChecks</key>

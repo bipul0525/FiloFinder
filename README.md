@@ -1,6 +1,6 @@
 <p align="center"><img src="docs/icon.png" width="128" alt="Filofinder icon"></p>
 
-<h1 align="center">Filofinder</h1>
+<h1 align="center">FiloFinder</h1>
 
 <p align="center">A fast, free, open-source file manager for macOS — with real Cut &amp; Paste.</p>
 
@@ -33,26 +33,32 @@ Filofinder is a Finder alternative built for speed:
 
 Requires **macOS 13 Ventura or newer**, on Apple Silicon or Intel.
 
-### Quick install (recommended)
+### Option 1 — One-line install (recommended)
 
-Paste this into **Terminal**:
+Open **Terminal** (⌘Space → type *Terminal*) and paste:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/bipul0525/filofinder/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/bipul0525/FiloFinder/main/install.sh | bash
 ```
 
-The script downloads the latest release, **verifies its checksum and signature**, installs it in `/Applications` and opens it. You're welcome to [read it first](install.sh).
+This downloads the latest release, **verifies its checksum and signature**, installs it in `/Applications`, removes the download quarantine and opens it. Nothing else needed. You're welcome to [read the script first](install.sh).
 
-### Manual install
+### Option 2 — Install from the DMG
 
-1. Download `Filofinder-x.y.z.dmg` from [Releases](https://github.com/bipul0525/filofinder/releases/latest).
-2. Open it and drag **Filofinder** to **Applications**.
-3. Because Filofinder isn't notarised by Apple (a paid program), macOS blocks the first launch and may say the app is "damaged". Allow it once with **either**:
-   - **Terminal:**
-     ```sh
-     xattr -dr com.apple.quarantine /Applications/Filofinder.app
-     ```
-   - **System Settings → Privacy & Security →** *Open Anyway*
+1. Download **`Filofinder-x.y.z.dmg`** from [Releases](https://github.com/bipul0525/FiloFinder/releases/latest).
+2. Double-click the DMG and drag **Filofinder** onto **Applications**.
+3. Eject the DMG.
+4. **Allow it to run (once).** FiloFinder is free and isn't notarised by Apple (that needs a paid $99/year developer account), so macOS blocks the first launch and may say the app *"is damaged"* or *"can't be verified"*. It isn't damaged. Open **Terminal** and paste:
+
+   ```sh
+   xattr -dr com.apple.quarantine /Applications/Filofinder.app && open /Applications/Filofinder.app
+   ```
+
+   This only removes the "downloaded from the internet" flag from FiloFinder; it doesn't change any system security setting.
+
+   **Without Terminal:** try to open the app once, then go to **System Settings → Privacy & Security**, scroll down and click **Open Anyway** next to the Filofinder message, and confirm.
+
+You only do this once — updates install automatically afterwards.
 
 ### First launch
 
