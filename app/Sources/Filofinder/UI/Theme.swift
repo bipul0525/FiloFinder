@@ -230,9 +230,9 @@ enum PlaceColor {
         let home = Tab.home
         func h(_ p: String) -> String { (home as NSString).appendingPathComponent(p) }
         return [
-            (h("Downloads"), .systemGreen), (h("Documents"), .systemBlue), (h("Desktop"), .systemTeal),
+            (h("Downloads"), .systemGreen), (h("Documents"), .systemCyan), (h("Desktop"), .systemTeal),
             (h("Pictures"), .systemOrange), (h("Movies"), .systemPink), (h("Music"), .systemRed),
-            ("/Applications", .systemMint), (Tab.trashPath, .systemGray), (home, .systemYellow),
+            ("/Applications", .systemMint), (Tab.trashPath, .systemGray), (home, .systemBlue),
         ]
     }
 
