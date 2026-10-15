@@ -16,7 +16,7 @@
 
 | | Finder | FiloFinder |
 |---|---|---|
-| Cut & Paste files (⌘X / ⌘V) | ✗ (hidden ⌥⌘V only) | ✓ |
+| Cut & Paste files (⌘X / ⌘V) | Hidden (⌘C then ⌥⌘V) | ✓ |
 | Dual-pane / split view | ✗ | ✓ |
 | Expandable folder tree sidebar | ✗ | ✓ |
 | Image previews in the folder tree | ✗ | ✓ |
