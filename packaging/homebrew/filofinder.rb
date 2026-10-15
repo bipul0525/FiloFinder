@@ -2,7 +2,7 @@
 # On each release, update `version` and `sha256` (the DMG line in SHA256SUMS).
 cask "filofinder" do
   version "0.1.0"
-  sha256 "REPLACE_WITH_DMG_SHA256"
+  sha256 "dafa2392aff628689e3a91163ed118f3734e669e9679de7c004b16414a684aee"
 
   url "https://github.com/bipul0525/FiloFinder/releases/download/v#{version}/Filofinder-#{version}.dmg"
   name "FiloFinder"
