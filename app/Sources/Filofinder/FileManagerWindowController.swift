@@ -58,17 +58,18 @@ final class FileManagerWindowController: NSWindowController, NSWindowDelegate, N
     private var tree: TreeSidebar!
     private var leftPane: PaneView!
     private var rightPane: PaneView!
-    private let panes = NSSplitView()
+    private let panes = TintSplitView()
     /// The focused pane's file view.
     private var panel: FilePanel { (splitMode && focused == .right ? rightPane : leftPane).panel }
     private var preview: PreviewPaneView!
     private(set) lazy var ops = FileOps(fm: self)
     /// Live refresh for the folder shown in each pane.
+    private var appearanceObservation: NSKeyValueObservation?
     private lazy var leftWatcher = FolderWatcher { [weak self] in self?.externalChange(.left) }
     private lazy var rightWatcher = FolderWatcher { [weak self] in self?.externalChange(.right) }
     private(set) lazy var quickLook = QuickLookController(fm: self)
     private var activity: String?
-    private let split = NSSplitView()
+    private let split = TintSplitView()
     private let frameMonitor = FrameMonitor()
     private var frameText = ""
 
@@ -119,6 +120,12 @@ final class FileManagerWindowController: NSWindowController, NSWindowDelegate, N
 
         split.isVertical = true
         split.dividerStyle = .thin
+        #if DEBUG
+        if ProcessInfo.processInfo.environment["FILOFINDER_PAINT_DIVIDERS"] != nil {
+            split.tint = .systemRed
+            panes.tint = .systemBlue
+        }
+        #endif
         split.delegate = self
         split.addArrangedSubview(tree)
         split.addArrangedSubview(panes)
@@ -149,6 +156,12 @@ final class FileManagerWindowController: NSWindowController, NSWindowDelegate, N
         body.setContentHuggingPriority(.init(1), for: .vertical)
         content.addSubview(column)
         pin(column, to: content)
+
+        // Light/Dark switch: colours baked into layers and labels must be
+        // rebuilt right away, not on the next relaunch.
+        appearanceObservation = NSApp.observe(\.effectiveAppearance, options: [.new]) { [weak self] _, _ in
+            DispatchQueue.main.async { self?.appearanceChanged() }
+        }
 
         // Tags changed (context menu): refresh dots everywhere.
         NotificationCenter.default.addObserver(forName: Tags.changed, object: nil, queue: .main) { [weak self] _ in
@@ -201,6 +214,15 @@ final class FileManagerWindowController: NSWindowController, NSWindowDelegate, N
         ])
     }
 
+    /// No divider next to a hidden panel. (AppKit would otherwise keep
+    /// drawing it at the hidden panel's old edge — the "ghost line" left
+    /// behind after closing the folder tree.)
+    func splitView(_ splitView: NSSplitView, shouldHideDividerAt dividerIndex: Int) -> Bool {
+        let views = splitView.arrangedSubviews
+        guard dividerIndex + 1 < views.count else { return true }
+        return views[dividerIndex].isHidden || views[dividerIndex + 1].isHidden
+    }
+
     // Tree 80–540, preview 200–700; split panes at least 20% each (captools limits).
     func splitView(_ splitView: NSSplitView, constrainMinCoordinate proposed: CGFloat, ofSubviewAt index: Int) -> CGFloat {
         if splitView === panes { return splitView.bounds.width * 0.2 }
@@ -213,6 +235,16 @@ final class FileManagerWindowController: NSWindowController, NSWindowDelegate, N
     }
 
     // MARK: Refresh
+
+    private func appearanceChanged() {
+        NSApp.effectiveAppearance.performAsCurrentDrawingAppearance {
+            refreshAll()
+            leftPane.panel.reloadVisible()
+            if splitMode { rightPane.panel.reloadVisible() }
+            window?.contentView?.needsDisplay = true
+            window?.contentView?.subviews.forEach { $0.needsDisplay = true }
+        }
+    }
 
     /// Something outside Filofinder changed a visible folder: re-list it,
     /// keeping the selection (skipped while our own job is running — it
@@ -264,6 +296,16 @@ final class FileManagerWindowController: NSWindowController, NSWindowDelegate, N
     }
 
     func debugTreeClick(row: Int) { tree.debugClick(row: row) }
+
+    #if DEBUG
+    func debugDumpLayout() -> String {
+        func f(_ v: NSView) -> String { "\(type(of: v)) hidden=\(v.isHidden) frame=\(v.frame)" }
+        var out = "split: \(split.frame) divider=\(split.dividerThickness)\n"
+        for v in split.subviews { out += "  split.sub \(f(v))\n" }
+        for v in panes.subviews { out += "  panes.sub \(f(v))\n" }
+        return out
+    }
+    #endif
 
     /// A pane's frame in window coordinates (the toolbar aligns to it).
     func paneFrameInWindow(_ side: Side) -> NSRect? {
@@ -917,5 +959,25 @@ final class FileManagerWindowController: NSWindowController, NSWindowDelegate, N
 
     func windowWillClose(_ notification: Notification) {
         frameMonitor.stop()
+    }
+}
+
+/// NSSplitView that never draws a divider beside a hidden panel. AppKit
+/// otherwise keeps painting it at the hidden panel's old edge — the "ghost
+/// line" left after closing the folder tree. (Tint is for debug probes.)
+final class TintSplitView: NSSplitView {
+    var tint: NSColor?
+    override var dividerColor: NSColor { tint ?? super.dividerColor }
+
+    override func drawDivider(in rect: NSRect) {
+        let views = arrangedSubviews
+        for i in 0..<max(views.count - 1, 0) {
+            guard views[i].isHidden || views[i + 1].isHidden else { continue }
+            let (start, end) = isVertical ? (rect.minX, rect.maxX) : (rect.minY, rect.maxY)
+            let before = isVertical ? views[i].frame.maxX : views[i].frame.maxY
+            let after = isVertical ? views[i + 1].frame.minX : views[i + 1].frame.minY
+            if abs(before - start) < 1.5 || abs(after - end) < 1.5 { return }
+        }
+        super.drawDivider(in: rect)
     }
 }

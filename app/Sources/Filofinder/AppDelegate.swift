@@ -73,6 +73,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 FileHandle.standardError.write(Data("[tree] now showing \(controller.activeTab.path)\n".utf8))
             }
         }
+        // FILOFINDER_TOGGLE_TREE=N toggles the folder tree N times.
+        if let n = env["FILOFINDER_TOGGLE_TREE"].flatMap(Int.init) {
+            for i in 0..<n {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5 + Double(i) * 0.4) { controller.toggleTree(nil) }
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                FileHandle.standardError.write(Data(controller.debugDumpLayout().utf8))
+            }
+        }
+        // FILOFINDER_FLIP_APPEARANCE=dark|light switches appearance while running.
+        if let mode = env["FILOFINDER_FLIP_APPEARANCE"] {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                NSApp.appearance = NSAppearance(named: mode == "dark" ? .darkAqua : .aqua)
+            }
+        }
         if env["FILOFINDER_SELECT_ALL"] == "1" {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { controller.selectAllItems(nil) }
         }

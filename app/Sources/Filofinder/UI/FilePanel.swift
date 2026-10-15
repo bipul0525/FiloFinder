@@ -76,7 +76,7 @@ final class FilePanel: NSView {
         grid.delegate = self
         grid.isSelectable = true
         grid.allowsMultipleSelection = true
-        grid.backgroundColors = [.clear]
+        grid.backgroundColors = [.controlBackgroundColor] // Finder: white (light) / dark grey (dark)
         grid.register(GridTile.self, forItemWithIdentifier: GridTile.id)
         grid.fm = fm
         grid.side = side
@@ -85,7 +85,8 @@ final class FilePanel: NSView {
         grid.setDraggingSourceOperationMask([.copy, .move, .generic], forLocal: false)
         gridScroll.documentView = grid
         gridScroll.hasVerticalScroller = true
-        gridScroll.drawsBackground = false
+        gridScroll.drawsBackground = true
+        gridScroll.backgroundColor = .controlBackgroundColor
         gridScroll.automaticallyAdjustsContentInsets = false
     }
 
@@ -118,7 +119,9 @@ final class FilePanel: NSView {
         list.draggingDestinationFeedbackStyle = .regular
         listScroll.documentView = list
         listScroll.hasVerticalScroller = true
-        listScroll.drawsBackground = false
+        listScroll.drawsBackground = true
+        listScroll.backgroundColor = .controlBackgroundColor
+        list.backgroundColor = .controlBackgroundColor
     }
 
     // MARK: - Updates
