@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleIdentifier</key>
+    <string>app.filofinder</string>
+    <key>CFBundleName</key>
+    <string>Filofinder</string>
+    <key>CFBundleDisplayName</key>
+    <string>Filofinder</string>
+    <key>CFBundleExecutable</key>
+    <string>Filofinder</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleShortVersionString</key>
+    <string>0.0.1</string>
+    <key>CFBundleVersion</key>
+    <string>1</string>
+    <key>LSMinimumSystemVersion</key>
+    <string>13.0</string>
+    <key>LSApplicationCategoryType</key>
+    <string>public.app-category.utilities</string>
+    <key>NSPrincipalClass</key>
+    <string>NSApplication</string>
+    <key>NSHighResolutionCapable</key>
+    <true/>
+    <key>NSSupportsAutomaticTermination</key>
+    <false/>
+    <key>NSDesktopFolderUsageDescription</key>
+    <string>Filofinder shows and manages the files in your Desktop folder.</string>
+    <key>NSDocumentsFolderUsageDescription</key>
+    <string>Filofinder shows and manages the files in your Documents folder.</string>
+    <key>NSDownloadsFolderUsageDescription</key>
+    <string>Filofinder shows and manages the files in your Downloads folder.</string>
+    <key>NSRemovableVolumesUsageDescription</key>
+    <string>Filofinder shows and manages files on external drives.</string>
+    <key>NSNetworkVolumesUsageDescription</key>
+    <string>Filofinder shows and manages files on network drives.</string>
+</dict>
+</plist>

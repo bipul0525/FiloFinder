@@ -1,0 +1,7 @@
+.DS_Store
+/core/target/
+/app/.build/
+/app/Sources/FilofinderFFI/include/*.h
+/app/Sources/FilofinderFFI/include/module.modulemap
+/app/Sources/Filofinder/Generated/
+/build/

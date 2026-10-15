@@ -1,0 +1,15 @@
+[package]
+name = "filofinder-ffi"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Swift bindings for filofinder-core (UniFFI)"
+
+[lib]
+name = "filofinder_ffi"
+# staticlib is linked into the app; cdylib only feeds uniffi-bindgen's library mode.
+crate-type = ["staticlib", "cdylib"]
+
+[dependencies]
+filofinder-core = { path = "../filofinder-core" }
+uniffi.workspace = true
