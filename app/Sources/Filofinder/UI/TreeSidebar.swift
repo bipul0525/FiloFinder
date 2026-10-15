@@ -351,7 +351,7 @@ final class TreeSidebar: NSVisualEffectView, NSOutlineViewDataSource, NSOutlineV
             let sub = node.symbol == "folder"
             cell.imageView?.image = PlaceColor.icon(node.symbol,
                                                     color: PlaceColor.muted(PlaceColor.color(for: node.path),
-                                                                            strength: sub ? 0.5 : 0.65))
+                                                                            strength: sub ? 0.65 : 0.8))
             cell.imageView?.contentTintColor = nil
         }
         (cell as? TreeCell)?.addButton.isEnabled = Tags.tag(fromPath: node.path) == nil
