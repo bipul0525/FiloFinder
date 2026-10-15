@@ -241,6 +241,14 @@ enum PlaceColor {
         table.filter { path == $0.0 || path.hasPrefix($0.0 + "/") }.max { $0.0.count < $1.0.count }?.1 ?? .systemGray
     }
 
+    /// The place colour softened toward grey — a hint of colour, not a shout.
+    /// `strength` 0 = grey, 1 = full colour.
+    static func muted(_ color: NSColor, strength: CGFloat = 0.45) -> NSColor {
+        let grey = NSColor.secondaryLabelColor.usingColorSpace(.deviceRGB) ?? .gray
+        let c = color.usingColorSpace(.deviceRGB) ?? color
+        return grey.blended(withFraction: strength, of: c) ?? c
+    }
+
     /// A two-tone (hierarchical) SF Symbol in that colour, not recoloured by
     /// sidebar or selection styles.
     static func icon(_ symbol: String, color: NSColor, size: CGFloat = 12.5, weight: NSFont.Weight = .regular) -> NSImage? {

@@ -347,8 +347,11 @@ final class TreeSidebar: NSVisualEffectView, NSOutlineViewDataSource, NSOutlineV
             cell.imageView?.contentTintColor = nil
         } else {
             // Each place has its own colour; subfolders inherit it (Downloads → green…).
-            cell.imageView?.image = PlaceColor.icon(node.symbol == "folder" ? "folder.fill" : node.symbol,
-                                                    color: PlaceColor.color(for: node.path))
+            // Muted: top-level places get a soft tint; subfolders an even softer outline.
+            let sub = node.symbol == "folder"
+            cell.imageView?.image = PlaceColor.icon(node.symbol,
+                                                    color: PlaceColor.muted(PlaceColor.color(for: node.path),
+                                                                            strength: sub ? 0.3 : 0.5))
             cell.imageView?.contentTintColor = nil
         }
         (cell as? TreeCell)?.addButton.isEnabled = Tags.tag(fromPath: node.path) == nil
