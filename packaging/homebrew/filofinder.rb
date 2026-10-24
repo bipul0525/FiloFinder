@@ -1,8 +1,8 @@
 # Homebrew cask. Lives in the tap repo github.com/bipul0525/homebrew-tap as Casks/filofinder.rb.
 # On each release, update `version` and `sha256` (the DMG line in SHA256SUMS).
 cask "filofinder" do
-  version "0.1.0"
-  sha256 "dafa2392aff628689e3a91163ed118f3734e669e9679de7c004b16414a684aee"
+  version "0.1.1"
+  sha256 "ee56b89fc3db792f0b531e7787b476e0bf2c5ccdfb6646a0e9b672081e478e9f"
 
   url "https://github.com/bipul0525/FiloFinder/releases/download/v#{version}/Filofinder-#{version}.dmg"
   name "FiloFinder"

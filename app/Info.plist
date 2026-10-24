@@ -2,51 +2,51 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>CFBundleIdentifier</key>
-    <string>app.filofinder</string>
-    <key>CFBundleName</key>
-    <string>Filofinder</string>
-    <key>CFBundleDisplayName</key>
-    <string>Filofinder</string>
-    <key>CFBundleExecutable</key>
-    <string>Filofinder</string>
-    <key>CFBundlePackageType</key>
-    <string>APPL</string>
-    <key>CFBundleShortVersionString</key>
-    <string>0.1.0</string>
-    <key>CFBundleVersion</key>
-    <string>1</string>
-    <key>CFBundleIconFile</key>
-    <string>AppIcon</string>
-    <key>NSHumanReadableCopyright</key>
-    <string>© 2026 Filofinder contributors · MIT License</string>
-    <key>SUFeedURL</key>
-    <string>https://github.com/bipul0525/FiloFinder/releases/latest/download/appcast.xml</string>
-    <key>SUPublicEDKey</key>
-    <string>k3fsj1vXEX/lSr8G2Fu+kiaWo1+/4Xlc9TcZf8XL/nY=</string>
-    <key>SUEnableAutomaticChecks</key>
-    <true/>
-    <key>SUScheduledCheckInterval</key>
-    <integer>21600</integer>
-    <key>LSMinimumSystemVersion</key>
-    <string>13.0</string>
-    <key>LSApplicationCategoryType</key>
-    <string>public.app-category.utilities</string>
-    <key>NSPrincipalClass</key>
-    <string>NSApplication</string>
-    <key>NSHighResolutionCapable</key>
-    <true/>
-    <key>NSSupportsAutomaticTermination</key>
-    <false/>
-    <key>NSDesktopFolderUsageDescription</key>
-    <string>Filofinder shows and manages the files in your Desktop folder.</string>
-    <key>NSDocumentsFolderUsageDescription</key>
-    <string>Filofinder shows and manages the files in your Documents folder.</string>
-    <key>NSDownloadsFolderUsageDescription</key>
-    <string>Filofinder shows and manages the files in your Downloads folder.</string>
-    <key>NSRemovableVolumesUsageDescription</key>
-    <string>Filofinder shows and manages files on external drives.</string>
-    <key>NSNetworkVolumesUsageDescription</key>
-    <string>Filofinder shows and manages files on network drives.</string>
+	<key>CFBundleDisplayName</key>
+	<string>Filofinder</string>
+	<key>CFBundleExecutable</key>
+	<string>Filofinder</string>
+	<key>CFBundleIconFile</key>
+	<string>AppIcon</string>
+	<key>CFBundleIdentifier</key>
+	<string>app.filofinder</string>
+	<key>CFBundleName</key>
+	<string>Filofinder</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.1.1</string>
+	<key>CFBundleVersion</key>
+	<string>2</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.utilities</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>13.0</string>
+	<key>NSDesktopFolderUsageDescription</key>
+	<string>Filofinder shows and manages the files in your Desktop folder.</string>
+	<key>NSDocumentsFolderUsageDescription</key>
+	<string>Filofinder shows and manages the files in your Documents folder.</string>
+	<key>NSDownloadsFolderUsageDescription</key>
+	<string>Filofinder shows and manages the files in your Downloads folder.</string>
+	<key>NSHighResolutionCapable</key>
+	<true/>
+	<key>NSHumanReadableCopyright</key>
+	<string>© 2026 Filofinder contributors · MIT License</string>
+	<key>NSNetworkVolumesUsageDescription</key>
+	<string>Filofinder shows and manages files on network drives.</string>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+	<key>NSRemovableVolumesUsageDescription</key>
+	<string>Filofinder shows and manages files on external drives.</string>
+	<key>NSSupportsAutomaticTermination</key>
+	<false/>
+	<key>SUEnableAutomaticChecks</key>
+	<true/>
+	<key>SUFeedURL</key>
+	<string>https://github.com/bipul0525/FiloFinder/releases/latest/download/appcast.xml</string>
+	<key>SUPublicEDKey</key>
+	<string>k3fsj1vXEX/lSr8G2Fu+kiaWo1+/4Xlc9TcZf8XL/nY=</string>
+	<key>SUScheduledCheckInterval</key>
+	<integer>21600</integer>
 </dict>
 </plist>
