@@ -381,6 +381,7 @@ final class TreeSidebar: NSVisualEffectView, NSOutlineViewDataSource, NSOutlineV
         } else {
             text.font = .systemFont(ofSize: 12.5)
             let image = NSImageView()
+            image.unregisterDraggedTypes() // drops go to the outline row
             image.symbolConfiguration = .init(pointSize: 12.5, weight: .regular)
             image.contentTintColor = .secondaryLabelColor
             image.translatesAutoresizingMaskIntoConstraints = false
@@ -507,6 +508,7 @@ final class TreeThumb: NSImageView {
         self.path = path
         super.init(frame: .zero)
         imageScaling = .scaleProportionallyUpOrDown
+        unregisterDraggedTypes() // drops go to the outline row
         wantsLayer = true
         layer?.cornerRadius = 3
         layer?.masksToBounds = true

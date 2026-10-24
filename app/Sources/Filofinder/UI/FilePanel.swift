@@ -636,6 +636,9 @@ final class GridTile: NSCollectionViewItem {
         thumbBox.layer?.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
         thumbBox.layer?.backgroundColor = NSColor.clear.cgColor // Finder: no card behind items
         thumb.imageScaling = .scaleProportionallyUpOrDown
+        // NSImageView accepts file drags by default and would swallow drops
+        // aimed at the folder; let them fall through to the collection view.
+        thumb.unregisterDraggedTypes()
         name.font = .systemFont(ofSize: 10)
         name.textColor = .labelColor.withAlphaComponent(0.8)
         name.alignment = .center
@@ -810,6 +813,8 @@ final class ListCell: NSTableCellView {
         // Outlets used by AppKit to draw the drag image for this row.
         textField = label
         if id.rawValue == "name" { imageView = icon }
+        icon.unregisterDraggedTypes() // drops go to the row, not the image view
+        check.unregisterDraggedTypes()
         switch id.rawValue {
         case "check":
             check.translatesAutoresizingMaskIntoConstraints = false
