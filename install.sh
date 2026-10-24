@@ -68,7 +68,7 @@ if pgrep -xq Filofinder; then
   sleep 1
 fi
 
-info "Installing to $dest…"
+info "Installing to ${dest}…"
 rm -rf "$dest/Filofinder.app"
 ditto "$app" "$dest/Filofinder.app"
 # Downloads from the internet carry a quarantine flag; without Apple's paid
