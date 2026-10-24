@@ -3,6 +3,44 @@ import AppKit
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private var windows: [FileManagerWindowController] = []
 
+    func applicationWillFinishLaunching(_ notification: Notification) {
+        // Before launch finishes, so a reveal that launched the app is handled.
+        DefaultBrowser.installRevealHandler { [weak self] paths in self?.reveal(paths) }
+    }
+
+    private var launched = false
+    private var pendingReveal: [String]?
+
+    private func reveal(_ paths: [String]) {
+        guard launched else { pendingReveal = paths; return }
+        let controller = windows.first { $0.window?.isVisible == true } ?? {
+            openWindow(path: nil)
+            return windows.last!
+        }()
+        controller.reveal(paths)
+        controller.window?.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
+    }
+
+    @objc func toggleDefaultFileBrowser(_ sender: Any?) {
+        let on = DefaultBrowser.isDefault
+        let alert = NSAlert()
+        if on {
+            alert.messageText = "Filofinder is your default file browser"
+            alert.informativeText = "\"Show in Finder\" in other apps opens Filofinder. Switch back to Finder?"
+            alert.addButton(withTitle: "Use Finder")
+        } else {
+            alert.messageText = "Make Filofinder the default file browser?"
+            alert.informativeText = "\"Show in Finder\" and \"Show in folder\" in other apps (browser downloads, editors…) will open Filofinder instead. Finder, the Desktop and the system Open/Save windows stay as they are.\n\nOther apps pick this up after they're restarted. You can switch back here at any time."
+            alert.addButton(withTitle: "Make Default")
+        }
+        alert.addButton(withTitle: "Cancel")
+        guard alert.runModal() == .alertFirstButtonReturn else { return }
+        DefaultBrowser.set(!on)
+        UI.hud(on ? "Finder is the default file browser again" : "Filofinder is now the default file browser",
+               in: NSApp.keyWindow)
+    }
+
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.mainMenu = MainMenu.build()
         // A folder passed on the command line opens in the first tab;
@@ -15,6 +53,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             NSApp.activate(ignoringOtherApps: true)
         }
         askForDiskAccessIfNeeded()
+        launched = true
+        if let paths = pendingReveal { pendingReveal = nil; reveal(paths) }
     }
 
     private var accessSheet: DiskAccessSheet?

@@ -16,6 +16,9 @@ enum MainMenu {
         updates.target = Updater.controller
         appMenu.addItem(updates)
         appMenu.addItem(.separator())
+        appMenu.addItem(withTitle: "Default File Browser…", action: #selector(AppDelegate.toggleDefaultFileBrowser(_:)),
+                        keyEquivalent: "")
+        appMenu.addItem(.separator())
         appMenu.addItem(withTitle: "Hide Filofinder", action: #selector(NSApplication.hide(_:)), keyEquivalent: "h")
         appMenu.addItem(withTitle: "Quit Filofinder", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
         add(appMenu, titled: "Filofinder", to: main)
@@ -37,6 +40,9 @@ enum MainMenu {
         edit.addItem(withTitle: "Cut", action: #selector(FM.cutItems(_:)), keyEquivalent: "x")
         edit.addItem(withTitle: "Copy", action: #selector(FM.copyItems(_:)), keyEquivalent: "c")
         edit.addItem(withTitle: "Paste", action: #selector(FM.pasteItems(_:)), keyEquivalent: "v")
+        let copyPath = NSMenuItem(title: "Copy Path", action: #selector(FM.copyPathAction(_:)), keyEquivalent: "c")
+        copyPath.keyEquivalentModifierMask = [.command, .option]
+        edit.addItem(copyPath)
         edit.addItem(withTitle: "Select All", action: #selector(FM.selectAllItems(_:)), keyEquivalent: "a")
         edit.addItem(withTitle: "Invert Selection", action: #selector(FM.invertSelection(_:)), keyEquivalent: "")
         add(edit, titled: "Edit", to: main)

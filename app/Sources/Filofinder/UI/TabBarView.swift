@@ -38,8 +38,11 @@ final class TabBarView: NSVisualEffectView {
 
     func update() {
         stack.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        for tab in fm.tabs {
-            stack.addArrangedSubview(TabChip(tab: tab, fm: fm, active: tab === fm.activeTab, canClose: fm.tabs.count > 1))
+        for (i, tab) in fm.tabs.enumerated() {
+            // A hairline between the pinned group and ordinary tabs.
+            if i > 0, fm.tabs[i - 1].isPinned, !tab.isPinned { stack.addArrangedSubview(UI.separator(height: 16)) }
+            stack.addArrangedSubview(TabChip(tab: tab, fm: fm, active: tab === fm.activeTab,
+                                             canClose: !tab.isPinned && fm.tabs.count > 1))
         }
         let plus = HoverButton(symbol: "plus", tooltip: "New Tab (⌘T)", target: fm,
                                action: #selector(FileManagerWindowController.newTab(_:)), size: 26, pointSize: 12)
@@ -98,6 +101,15 @@ private final class TabChip: NSView {
             close.widthAnchor.constraint(equalToConstant: 18),
         ])
         if !canClose { close.removeFromSuperview() }
+        if tab.isPinned {
+            // Pinned: a small pin where the close button would be.
+            let pin = NSImageView(image: NSImage(systemSymbolName: "pin.fill", accessibilityDescription: "Pinned") ?? NSImage())
+            pin.symbolConfiguration = .init(pointSize: 9, weight: .semibold)
+            pin.contentTintColor = .tertiaryLabelColor
+            pin.unregisterDraggedTypes()
+            row.addArrangedSubview(pin)
+            toolTip = "Pinned: \(tab.pinnedPath ?? tab.path)"
+        }
     }
 
     @available(*, unavailable)
@@ -146,10 +158,14 @@ private final class TabChip: NSView {
 
     override func menu(for event: NSEvent) -> NSMenu? {
         let menu = NSMenu()
+        if fm.canPin(tab) {
+            menu.addItem(tab.isPinned ? item("Unpin Tab", "pin.slash", #selector(togglePin))
+                                      : item("Pin Tab", "pin", #selector(togglePin)))
+        }
         menu.addItem(item("Duplicate Tab", "plus.square.on.square", #selector(duplicateTab)))
         if fm.tabs.count > 1 {
             menu.addItem(.separator())
-            menu.addItem(item("Close Tab", "xmark", #selector(closeTab)))
+            if !tab.isPinned { menu.addItem(item("Close Tab", "xmark", #selector(closeTab))) }
             menu.addItem(item("Close Other Tabs", "xmark.circle", #selector(closeOthers)))
             if fm.tabs.last !== tab {
                 menu.addItem(item("Close Tabs to Right", "arrow.right.to.line", #selector(closeRight)))
@@ -166,6 +182,7 @@ private final class TabChip: NSView {
     }
 
     @objc private func closeTab() { fm.close(tab) }
+    @objc private func togglePin() { fm.togglePin(tab) }
     @objc private func duplicateTab() { fm.duplicate(tab) }
     @objc private func closeOthers() { fm.closeOthers(than: tab) }
     @objc private func closeRight() { fm.closeTabsRight(of: tab) }

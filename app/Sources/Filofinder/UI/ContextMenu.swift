@@ -54,7 +54,9 @@ final class ContextMenuBuilder: NSObject {
             add(menu, fm.ops.cutPaths.isEmpty ? "Paste Item" + (fm.ops.pendingCount == 1 ? "" : "s") : "Move Items Here",
                 #selector(paste))
         }
-        add(menu, "Copy Path", #selector(copyPath))
+        let copyPathItem = add(menu, "Copy Path", #selector(copyPath))
+        copyPathItem.keyEquivalent = "c"
+        copyPathItem.keyEquivalentModifierMask = [.command, .option]
         menu.addItem(.separator())
 
         let tags = NSMenuItem()
@@ -85,6 +87,7 @@ final class ContextMenuBuilder: NSObject {
                 #selector(paste))
             menu.addItem(.separator())
         }
+        if !fm.activeTab.isVirtual { add(menu, "Copy Folder Path", #selector(copyFolderPath)) }
         add(menu, "Select All", #selector(selectAll))
         add(menu, "Invert Selection", #selector(invert))
         menu.addItem(.separator())
@@ -182,6 +185,12 @@ final class ContextMenuBuilder: NSObject {
         let field: SortField = (sender.representedObject as? String) == "kind" ? .kind
             : (sender.representedObject as? String) == "size" ? .size : .name
         fm.setSort(field, descending: false)
+    }
+
+    @objc private func copyFolderPath() {
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(fm.activeTab.path, forType: .string)
+        UI.hud("Folder path copied", in: fm.window)
     }
 
     @objc private func copyPath() {

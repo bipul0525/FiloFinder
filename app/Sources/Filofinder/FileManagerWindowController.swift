@@ -76,7 +76,7 @@ final class FileManagerWindowController: NSWindowController, NSWindowDelegate, N
     init(path: String?) {
         let first = Tab(path: path ?? Tab.home)
         leftTab = first
-        tabs = [first]
+        tabs = Self.loadPinnedTabs() + [first]
         let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 1240, height: 780),
                               styleMask: [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView],
                               backing: .buffered, defer: false)
@@ -473,14 +473,64 @@ final class FileManagerWindowController: NSWindowController, NSWindowDelegate, N
         refreshAll()
     }
 
+    /// "Show in Finder" from other apps (when Filofinder is the default file
+    /// browser): open the enclosing folder in a new tab with the items selected.
+    func reveal(_ paths: [String]) {
+        guard let first = paths.first else { return }
+        let parent = (first as NSString).deletingLastPathComponent
+        let tab = Tab(path: parent.isEmpty ? "/" : parent)
+        tab.selection = Set(paths.filter { ($0 as NSString).deletingLastPathComponent == parent }
+            .map { ($0 as NSString).lastPathComponent })
+        tabs.append(tab)
+        if tab === rightTab { rightTab = leftTab }
+        leftTab = tab
+        focused = .left
+        previewName = nil
+        load(tab, keepSelection: true)
+        refreshAll()
+    }
+
+    /// ⌥⌘C: the selected items' paths, or the current folder's when nothing is selected.
+    @objc func copyPathAction(_ sender: Any?) {
+        guard !activeTab.isVirtual || !selectedPaths().isEmpty else { NSSound.beep(); return }
+        let paths = selectedPaths().isEmpty ? [activeTab.path] : selectedPaths()
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(paths.joined(separator: "\n"), forType: .string)
+        UI.hud(paths.count == 1 ? "Path copied" : "\(paths.count) paths copied", in: window)
+    }
+
     @objc func newTab(_ sender: Any?) {
         let tab = Tab()
         tabs.append(tab)
         switchTo(tab)
     }
 
+    // MARK: Pinned tabs
+
+    private static let pinnedKey = "pinnedTabs"
+
+    private static func loadPinnedTabs() -> [Tab] {
+        (UserDefaults.standard.stringArray(forKey: pinnedKey) ?? [])
+            .filter { FileManager.default.fileExists(atPath: $0) }
+            .map { let t = Tab(path: $0); t.pinnedPath = $0; return t }
+    }
+
+    private func savePinnedTabs() {
+        UserDefaults.standard.set(tabs.compactMap(\.pinnedPath), forKey: Self.pinnedKey)
+    }
+
+    func canPin(_ tab: Tab) -> Bool { !tab.isVirtual }
+
+    /// Pin at the tab's current folder (pinned tabs sit first), or unpin.
+    func togglePin(_ tab: Tab) {
+        tab.pinnedPath = tab.isPinned ? nil : tab.path
+        tabs = tabs.filter(\.isPinned) + tabs.filter { !$0.isPinned }
+        savePinnedTabs()
+        refreshAll()
+    }
+
     func close(_ tab: Tab) {
-        guard tabs.count > 1, let i = tabs.firstIndex(where: { $0 === tab }) else { return }
+        guard !tab.isPinned, tabs.count > 1, let i = tabs.firstIndex(where: { $0 === tab }) else { return }
         tabs.remove(at: i)
         if tab === rightTab { rightTab = nil; splitMode = false; focused = .left }
         if tab === leftTab {
@@ -499,7 +549,7 @@ final class FileManagerWindowController: NSWindowController, NSWindowDelegate, N
     }
 
     func closeOthers(than tab: Tab) {
-        tabs = [tab]
+        tabs = tabs.filter { $0.isPinned || $0 === tab }
         rightTab = nil
         splitMode = false
         focused = .left
@@ -509,8 +559,8 @@ final class FileManagerWindowController: NSWindowController, NSWindowDelegate, N
 
     func closeTabsRight(of tab: Tab) {
         guard let i = tabs.firstIndex(where: { $0 === tab }) else { return }
-        let removed = tabs[(i + 1)...]
-        tabs.removeSubrange((i + 1)...)
+        let removed = tabs[(i + 1)...].filter { !$0.isPinned }
+        tabs.removeAll { t in removed.contains { $0 === t } }
         if let r = rightTab, removed.contains(where: { $0 === r }) { rightTab = nil; splitMode = false; focused = .left }
         if removed.contains(where: { $0 === leftTab }) { switchTo(tab) }
         refreshAll()

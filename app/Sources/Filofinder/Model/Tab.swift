@@ -19,6 +19,9 @@ final class Tab {
     var accessDenied = false
     /// "list 3 ms · sort 1 ms · 9 ms total" for the status bar.
     var timing = ""
+    /// The folder this tab was pinned at; pinned tabs reopen there on launch.
+    var pinnedPath: String?
+    var isPinned: Bool { pinnedPath != nil }
 
     static var home: String { FileManager.default.homeDirectoryForCurrentUser.path }
 

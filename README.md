@@ -39,6 +39,7 @@ It's a good fit if you're looking for a **Windows Explorer–style file manager 
   - Copies are written under a temporary name first, so a crash never leaves a half-copied file.
   - Moves between drives delete the original only after the copy is verified.
 - **Split view** (⌘M) for moving files between two folders, and **tabs**.
+- **Pinned tabs:** right-click a tab → *Pin Tab* to keep your favourite folders open every time FiloFinder starts.
 - **Drag & drop** between folders, panes, the sidebar and other apps.
 - **Quick Look** (Space) and a preview pane for every file type macOS can preview.
 - **Colour tags:** tag files from the right-click menu, and browse every tagged file from the sidebar.
@@ -47,6 +48,8 @@ It's a good fit if you're looking for a **Windows Explorer–style file manager 
   - Parallel, and skips `.DS_Store` / `__MACOSX` junk.
   - Protected against malicious archives.
 - **Live refresh:** folders update when files change elsewhere.
+- **Copy Path** (⌥⌘C) for any file or folder, handy for pasting into upload windows with ⇧⌘G.
+- **Default file browser (optional):** make "Show in Finder" in other apps (browser downloads, editors…) open FiloFinder instead. Turn it on or off from *Filofinder → Default File Browser…*.
 - **Grid and list views, adjustable icon and text size,** and Finder's keyboard shortcuts.
 
 ## Install
@@ -101,6 +104,7 @@ Filofinder checks for updates every 6 hours and installs them on relaunch. You c
 | Return / ⌘↓ | Open |
 | ⌘[ · ⌘] · ⌘↑ | Back · Forward · Enclosing folder |
 | ⌘C · ⌘X · ⌘V | Copy · Cut · Paste |
+| ⌥⌘C | Copy path |
 | ⌘D · F2 | Duplicate · Rename |
 | ⌫ / Del | Move to Trash (asks first) |
 | ⌘⌫ | Delete immediately (asks first) |
@@ -141,6 +145,8 @@ See [docs/PLAN.md](docs/PLAN.md) for the design.
 **Can I cut and paste files on Mac with it?** Yes. ⌘X then ⌘V moves files, just like Windows.
 
 **Does it replace Finder?** It runs alongside Finder; you can use it as your everyday file browser. Finder stays installed (macOS requires it).
+
+**Can FiloFinder open instead of Finder from other apps?** Yes. Use *Filofinder → Default File Browser…* so "Show in Finder" links open FiloFinder. The system upload/save windows are part of macOS and can't be replaced by any app. Drag files from FiloFinder onto the upload area instead, or copy a path (⌥⌘C) and paste it with ⇧⌘G.
 
 **Does it work on Apple Silicon and Intel?** Yes, it's a universal app for macOS 13 Ventura and newer.
 
